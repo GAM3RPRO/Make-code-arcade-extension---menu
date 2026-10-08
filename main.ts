@@ -2,18 +2,22 @@ namespace miniMenu {
     let items: string[] = []
     let selected = 0
     let opened = false
+    let menu: Sprite = null
 
     //% block="create menu"
     export function create() {
+        if (menu) menu.destroy()
         items = []
         selected = 0
         opened = false
+        menu = null
     }
 
     //% block="add menu item $name"
     //% name.defl="PLAY"
     export function addItem(name: string) {
         items.push(name)
+        if (opened) draw()
     }
 
     //% block="open menu"
@@ -26,7 +30,10 @@ namespace miniMenu {
     //% block="close menu"
     export function close() {
         opened = false
-        screen.fill(0)
+        if (menu) {
+            menu.destroy()
+            menu = null
+        }
     }
 
     //% block="move menu $amount"
@@ -50,17 +57,32 @@ namespace miniMenu {
     }
 
     function draw() {
-        if (!opened) return
+        if (!opened || items.length == 0) return
 
-        screen.fill(15)
+        let h = items.length * 18 + 10
+        if (h > 110) h = 110
+
+        let img = image.create(120, h)
+        img.fill(1)
 
         for (let i = 0; i < items.length; i++) {
-            let y = 30 + i * 20
+            let y = 5 + i * 18
 
-            if (i == selected)
-                screen.print("> " + items[i], 30, y, 1)
-            else
-                screen.print(items[i], 40, y, 1)
+            if (i == selected) {
+                img.fillRect(3, y - 2, 114, 16, 2)
+                img.print("> " + items[i], 7, y, 15)
+            } else {
+                img.print(items[i], 10, y, 15)
+            }
+        }
+
+        if (menu) {
+            menu.setImage(img)
+        } else {
+            menu = sprites.create(img, SpriteKind.create())
+            menu.setPosition(80, 60)
+            menu.setFlag(SpriteFlag.Ghost, true)
+            menu.z = 1000
         }
     }
 }
