@@ -29,12 +29,11 @@ namespace miniMenu {
         screen.fill(0)
     }
 
-    //% block="move menu $direction"
-    //% direction.shadow=directionPicker
-    export function move(direction: number) {
+    //% block="move menu $amount"
+    export function move(amount: number) {
         if (!opened || items.length == 0) return
 
-        selected += direction
+        selected += amount
 
         if (selected < 0)
             selected = items.length - 1
@@ -50,22 +49,18 @@ namespace miniMenu {
         return selected
     }
 
-    //% block="menu is open"
-    export function isOpen(): boolean {
-        return opened
-    }
-
     function draw() {
-        screen.fill(0)
+        if (!opened) return
+
+        screen.fill(15)
 
         for (let i = 0; i < items.length; i++) {
             let y = 30 + i * 20
 
-            if (i == selected) {
+            if (i == selected)
                 screen.print("> " + items[i], 30, y, 1)
-            } else {
+            else
                 screen.print(items[i], 40, y, 1)
-            }
         }
     }
 }
