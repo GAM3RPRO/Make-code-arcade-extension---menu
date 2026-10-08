@@ -4,6 +4,9 @@ namespace miniMenu {
     let opened = false
     let menu: Sprite = null
 
+    let eventNames: string[] = []
+    let eventHandlers: (() => void)[] = []
+
     //% block="create menu"
     export function create() {
         if (menu) menu.destroy()
@@ -11,6 +14,8 @@ namespace miniMenu {
         selected = 0
         opened = false
         menu = null
+        eventNames = []
+        eventHandlers = []
     }
 
     //% block="add menu item $name"
@@ -56,6 +61,24 @@ namespace miniMenu {
         return selected
     }
 
+    //% block="on menu item $name pressed"
+    export function onItemPressed(name: string, handler: () => void) {
+        eventNames.push(name)
+        eventHandlers.push(handler)
+    }
+
+    controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+        if (!opened || items.length == 0) return
+
+        let current = items[selected]
+
+        for (let i = 0; i < eventNames.length; i++) {
+            if (eventNames[i] == current) {
+                eventHandlers[i]()
+            }
+        }
+    })
+
     function draw() {
         if (!opened || items.length == 0) return
 
@@ -85,4 +108,4 @@ namespace miniMenu {
             menu.z = 1000
         }
     }
-}
+            }
