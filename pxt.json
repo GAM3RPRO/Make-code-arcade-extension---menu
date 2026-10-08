@@ -1,0 +1,15 @@
+{
+    "name": "mini-menu",
+    "version": "0.0.1",
+    "description": "A mini menu with independently editable items.",
+    "dependencies": {
+        "device": "*"
+    },
+    "files": [
+        "main.ts"
+    ],
+    "supportedTargets": [
+        "arcade"
+    ],
+    "preferredEditor": "tsprj"
+}
