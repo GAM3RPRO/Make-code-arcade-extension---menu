@@ -11,6 +11,7 @@ namespace miniMenu {
     }
 
     //% block="add menu item $name"
+    //% name.defl="PLAY"
     export function addItem(name: string) {
         items.push(name)
     }
@@ -28,8 +29,8 @@ namespace miniMenu {
         screen.fill(0)
     }
 
-    //% block="move selection $direction"
-    //% direction.min=-1 direction.max=1
+    //% block="move menu $direction"
+    //% direction.shadow=directionPicker
     export function move(direction: number) {
         if (!opened || items.length == 0) return
 
@@ -44,21 +45,27 @@ namespace miniMenu {
         draw()
     }
 
-    //% block="selected item"
+    //% block="selected menu item"
     export function selectedItem(): number {
         return selected
+    }
+
+    //% block="menu is open"
+    export function isOpen(): boolean {
+        return opened
     }
 
     function draw() {
         screen.fill(0)
 
         for (let i = 0; i < items.length; i++) {
-            let y = 35 + i * 25
+            let y = 30 + i * 20
 
-            if (i == selected)
-                screen.print("> " + items[i], 35, y, 1)
-            else
-                screen.print(items[i], 45, y, 1)
+            if (i == selected) {
+                screen.print("> " + items[i], 30, y, 1)
+            } else {
+                screen.print(items[i], 40, y, 1)
+            }
         }
     }
 }
