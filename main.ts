@@ -42,11 +42,8 @@ namespace miniMenu {
 
         selected += amount
 
-        if (selected < 0)
-            selected = items.length - 1
-
-        if (selected >= items.length)
-            selected = 0
+        if (selected < 0) selected = items.length - 1
+        if (selected >= items.length) selected = 0
 
         draw()
     }
@@ -56,13 +53,15 @@ namespace miniMenu {
         return selected
     }
 
+    //% blockId=miniMenuOnItemPressed
     //% block="on menu item $name pressed"
+    //% handlerStatement=1
     //% name.defl="PLAY"
-    //% handlerStatement=true
-    export function onItemPressed(name: string, handler: () => void) {
+    export function onItemPressed(name: string, handler: () => void): void {
         controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-            if (opened && items.length > 0 && items[selected] == name)
+            if (opened && items.length > 0 && items[selected] == name) {
                 handler()
+            }
         })
     }
 
