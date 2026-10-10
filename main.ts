@@ -3,13 +3,11 @@ namespace miniMenu {
     let selected = 0
     let opened = false
     let menu: Sprite = null
-    let events: { name: string, handler: () => void }[] = []
 
     //% block="create menu"
     export function create() {
         if (menu) menu.destroy()
         items = []
-        events = []
         selected = 0
         opened = false
         menu = null
@@ -40,7 +38,7 @@ namespace miniMenu {
 
     //% block="move menu $amount"
     export function move(amount: number) {
-        if (!opened || !items.length) return
+        if (!opened || items.length == 0) return
         selected += amount
         if (selected < 0) selected = items.length - 1
         if (selected >= items.length) selected = 0
@@ -57,20 +55,20 @@ namespace miniMenu {
     //% name.defl="PLAY"
     //% draggableParameters
     export function onItemPressed(name: string, handler: () => void): void {
-        events.push({ name: name, handler: handler })
+        control.runInParallel(function () {
+            while (true) {
+                pause(100)
+                if (opened && items.length > 0 && items[selected] == name &&
+                    controller.A.isPressed()) {
+                    handler()
+                    pause(500)
+                }
+            }
+        })
     }
 
-    controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-        if (!opened || !items.length) return
-
-        for (let event of events) {
-            if (items[selected] == event.name) event.handler()
-        }
-    })
-
     function draw() {
-        if (!opened || !items.length) return
-
+        if (!opened || items.length == 0) return
         let h = Math.min(110, items.length * 18 + 10)
         let img = image.create(120, h)
         img.fill(1)
@@ -94,4 +92,4 @@ namespace miniMenu {
             menu.z = 1000
         }
     }
-            }
+    }
