@@ -3,11 +3,13 @@ namespace miniMenu {
     let selected = 0
     let opened = false
     let menu: Sprite = null
+    let events: { name: string, handler: () => void }[] = []
 
     //% block="create menu"
     export function create() {
         if (menu) menu.destroy()
         items = []
+        events = []
         selected = 0
         opened = false
         menu = null
@@ -38,13 +40,10 @@ namespace miniMenu {
 
     //% block="move menu $amount"
     export function move(amount: number) {
-        if (!opened || items.length == 0) return
-
+        if (!opened || !items.length) return
         selected += amount
-
         if (selected < 0) selected = items.length - 1
         if (selected >= items.length) selected = 0
-
         draw()
     }
 
@@ -55,28 +54,29 @@ namespace miniMenu {
 
     //% blockId=miniMenuOnItemPressed
     //% block="on menu item $name pressed"
-    //% handlerStatement=1
     //% name.defl="PLAY"
+    //% draggableParameters
     export function onItemPressed(name: string, handler: () => void): void {
-        controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-            if (opened && items.length > 0 && items[selected] == name) {
-                handler()
-            }
-        })
+        events.push({ name: name, handler: handler })
     }
 
+    controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+        if (!opened || !items.length) return
+
+        for (let event of events) {
+            if (items[selected] == event.name) event.handler()
+        }
+    })
+
     function draw() {
-        if (!opened || items.length == 0) return
+        if (!opened || !items.length) return
 
-        let h = items.length * 18 + 10
-        if (h > 110) h = 110
-
+        let h = Math.min(110, items.length * 18 + 10)
         let img = image.create(120, h)
         img.fill(1)
 
         for (let i = 0; i < items.length; i++) {
             let y = 5 + i * 18
-
             if (i == selected) {
                 img.fillRect(3, y - 2, 114, 16, 2)
                 img.print("> " + items[i], 7, y, 15)
@@ -94,4 +94,4 @@ namespace miniMenu {
             menu.z = 1000
         }
     }
-}
+            }
